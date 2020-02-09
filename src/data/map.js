@@ -3,71 +3,80 @@ import { getPinyinByName } from '../data/zhen'
 import buildLineConfig from './config_line'
 import buildMapConfig from './config_map'
 import chinaMap from '../data/china.json'
-import area from './area.json'
+// import area from './area.json'
+import axios from 'axios'
 
 export default function buildMapData (province) {
-  const mapData = {
-    updateTime: area.lastUpdateTime,
-    total: null,
-    today: null,
-    map: null,
-    table: null,
-    isProvince: false,
-    chinaDayList: null
-  }
+  return axios.get('data/area.json').then(res => {
+    let area = res.data
+    const mapData = {
+      updateTime: area.lastUpdateTime,
+      total: null,
+      today: null,
+      map: null,
+      table: null,
+      isProvince: false,
+      chinaDayList: null
+    }
 
-  const provinces = area.areaTree[0].children
-  const provincePinyin = getPinyinByName(province)
-  const result = []
+    const provinces = area.areaTree[0].children
+    const provincePinyin = getPinyinByName(province)
+    const result = []
 
-  if (province) {
-    require(`echarts/map/js/province/${provincePinyin}`)
-    // ECharts.registerMap(provincePinyin, provinceMap)
+    if (province) {
+      require(`echarts/map/js/province/${provincePinyin}`)
+      // ECharts.registerMap(provincePinyin, provinceMap)
 
-    const index = provinces.findIndex(p => {
-      return p.name === province
-    })
-
-    mapData.isProvince = true
-    mapData.total = provinces[index]['total']
-    mapData.today = provinces[index]['today']
-    mapData.table = provinces[index]['children']
-
-    provinces[index]['children'].forEach(city => {
-      result.push({
-        name: city.cityName,
-        value: city.total.confirm
+      const index = provinces.findIndex(p => {
+        return p.name === province
       })
-    })
 
-    mapData.map = buildMapConfig(province, result)
-  } else {
-    ECharts.registerMap('china', chinaMap)
+      mapData.isProvince = true
+      mapData.total = provinces[index]['total']
+      mapData.today = provinces[index]['today']
+      mapData.table = provinces[index]['children']
 
-    provinces.forEach(p => {
-      result.push({
-        name: p.name,
-        value: p.total.confirm
+      provinces[index]['children'].forEach(city => {
+        result.push({
+          name: city.cityName,
+          value: city.total.confirm
+        })
       })
-    })
 
-    const xAxis = []
-    const dataConfirm = []
-    const dataSuspect = []
-    const dataDead = []
-    area.chinaDayList.forEach(day => {
-      xAxis.push(day.date)
-      dataConfirm.push(day.confirm)
-      dataSuspect.push(day.suspect)
-      dataDead.push(day.dead)
-    })
+      mapData.map = buildMapConfig(province, result)
+    } else {
+      ECharts.registerMap('china', chinaMap)
 
-    mapData.total = area.chinaTotal
-    mapData.today = area.chinaAdd
-    mapData.table = area.areaTree[0].children
-    mapData.map = buildMapConfig(province, result)
-    mapData.chinaDayList = buildLineConfig(xAxis, dataConfirm, dataSuspect, dataDead)
-  }
+      provinces.forEach(p => {
+        result.push({
+          name: p.name,
+          value: p.total.confirm
+        })
+      })
 
-  return mapData
+      const xAxis = []
+      const dataConfirm = []
+      const dataSuspect = []
+      const dataDead = []
+      area.chinaDayList.forEach(day => {
+        xAxis.push(day.date)
+        dataConfirm.push(day.confirm)
+        dataSuspect.push(day.suspect)
+        dataDead.push(day.dead)
+      })
+
+      mapData.total = area.chinaTotal
+      mapData.today = area.chinaAdd
+      mapData.table = area.areaTree[0].children
+      mapData.map = buildMapConfig(province, result)
+      mapData.chinaDayList = buildLineConfig(
+        xAxis,
+        dataConfirm,
+        dataSuspect,
+        dataDead
+      )
+    }
+
+    return mapData
+  })
 }

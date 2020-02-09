@@ -2,7 +2,7 @@
   <div>
     <div class="data-statement">
       <div class="statement-title">全国疫情状况</div>
-      <div class="update-time">截止 {{updateTime}}</div>
+      <div class="update-time">截止 {{ updateTime }}</div>
       <div class="shuoming" @click="handleModal"><span>数据说明</span></div>
     </div>
 
@@ -30,6 +30,7 @@
 
     <div class="section-title">国内病例</div>
     <e-table :data="table"></e-table>
+    <Loading v-if="loading" />
   </div>
 </template>
 
@@ -40,15 +41,18 @@ import ETable from '../components/Table.vue'
 import ECharts from '../components/ECharts.vue'
 import ESummary from '../components/Summary.vue'
 import { getNameByPinyin, getPinyinByName } from '../data/zhen'
+import Loading from '../components/Loading.vue'
 
 export default {
   components: {
     ETable,
     ECharts,
-    ESummary
+    ESummary,
+    Loading
   },
   data () {
     return {
+      loading: true,
       updateTime: '',
       today: {},
       total: {},
@@ -71,7 +75,7 @@ export default {
         title: '数据说明',
         msg: `
           <div>
-            <div>0. 数据爬取自【腾讯新闻】,在原有基础上增加了“省”一级的疫情地图。(仅供学习研究，<a href="https://github.com/border-1px/2019-nCov">[查看源代码]</a>)</div><br>
+            <div>0. 数据爬取自【腾讯新闻】,在原有基础上增加了“省”一级的疫情地图。</div><br>
             <div>以下内容为腾讯数据声明：</div>
             <div>1. 全部数据来源于国家卫健委、各省卫健委以及权威媒体报道。</div><br>
             <div>2. 腾讯新闻的统计方法如下：</div>
@@ -88,21 +92,33 @@ export default {
   created () {
     let province = this.$route.path.substr(1)
     this.provinceName = getNameByPinyin(province)
-    const {
-      updateTime,
-      total,
-      map,
-      table,
-      chinaDayList,
-      today
-    } = buildMapData(this.provinceName)
+    // const {
+    //   updateTime,
+    //   total,
+    //   map,
+    //   table,
+    //   chinaDayList,
+    //   today
+    // } = buildMapData(this.provinceName)
 
-    this.chinaDayList = chinaDayList
-    this.updateTime = updateTime
-    this.today = today
-    this.total = total
-    this.table = table
-    this.map = map
+    // this.chinaDayList = chinaDayList
+    // this.updateTime = updateTime
+    // this.today = today
+    // this.total = total
+    // this.table = table
+    // this.map = map
+    this.loading = true
+    buildMapData(this.provinceName).then(
+      ({ updateTime, total, map, table, chinaDayList, today }) => {
+        this.chinaDayList = chinaDayList
+        this.updateTime = updateTime
+        this.today = today
+        this.total = total
+        this.table = table
+        this.map = map
+        this.loading = false
+      }
+    )
   }
 }
 </script>

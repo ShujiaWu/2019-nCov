@@ -1,8 +1,8 @@
 <template>
   <div>
     <div class="data-statement">
-      <div class="statement-title">{{provinceName}} | 疫情状况</div>
-      <div class="update-time">截止 {{updateTime}}</div>
+      <div class="statement-title">{{ provinceName }} | 疫情状况</div>
+      <div class="update-time">截止 {{ updateTime }}</div>
       <div class="shuoming" @click="handleModal"><span>数据说明</span></div>
     </div>
 
@@ -26,15 +26,21 @@
         <li>死亡</li>
       </ul>
       <ul class="table-body">
-        <li v-for="(item, index) in table" :key="index" class="table-line table-province">
-          <div>{{item.name}}</div>
-          <div>{{item.today.confirm}}</div>
-          <div>{{item.total.confirm}}</div>
-          <div>{{item.total.heal}}</div>
-          <div>{{item.total.dead}}</div>
+        <li
+          v-for="(item, index) in table"
+          :key="index"
+          class="table-line table-province"
+        >
+          <div>{{ item.name }}</div>
+          <div>{{ item.today.confirm }}</div>
+          <div>{{ item.total.confirm }}</div>
+          <div>{{ item.total.heal }}</div>
+          <div>{{ item.total.dead }}</div>
         </li>
       </ul>
     </div>
+
+    <Loading v-if="loading" />
   </div>
 </template>
 
@@ -44,14 +50,17 @@ import EAlert from '../components/Alert'
 import { getNameByPinyin } from '../data/zhen'
 import ECharts from '../components/ECharts.vue'
 import ESummary from '../components/Summary.vue'
+import Loading from '../components/Loading.vue'
 
 export default {
   components: {
     ECharts,
-    ESummary
+    ESummary,
+    Loading
   },
   data () {
     return {
+      loading: true,
       updateTime: '',
       total: {},
       map: {},
@@ -68,7 +77,7 @@ export default {
         title: '数据说明',
         msg: `
           <div>
-            <div>0. 数据爬取自【腾讯新闻】,在原有基础上增加了“省”一级的疫情地图。(仅供学习研究，<a href="https://github.com/border-1px/2019-nCov">[查看源代码]</a>)</div><br>
+            <div>0. 数据爬取自【腾讯新闻】,在原有基础上增加了“省”一级的疫情地图。</div><br>
             <div>以下内容为腾讯数据声明：</div>
             <div>1. 全部数据来源于国家卫健委、各省卫健委以及权威媒体报道。</div><br>
             <div>2. 腾讯新闻的统计方法如下：</div>
@@ -85,12 +94,22 @@ export default {
   created () {
     let province = this.$route.path.substr(1)
     this.provinceName = getNameByPinyin(province)
-    const { updateTime, total, map, table } = buildMapData(this.provinceName)
+    // const { updateTime, total, map, table } = buildMapData(this.provinceName)
 
-    this.updateTime = updateTime
-    this.total = total
-    this.table = table
-    this.map = map
+    // this.updateTime = updateTime
+    // this.total = total
+    // this.table = table
+    // this.map = map
+
+    this.loading = true
+    buildMapData(this.provinceName).then(result => {
+      this.updateTime = result.updateTime
+      this.total = result.total
+      this.table = result.table
+      this.map = result.map
+
+      this.loading = false
+    })
   }
 }
 </script>
