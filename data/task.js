@@ -4,7 +4,7 @@ const { exec } = require('child_process')
 const schedule = require('node-schedule')
 
 console.log(shellOrder)
-schedule.scheduleJob('0 /30 * * * *', () => {
+schedule.scheduleJob('0 */10 * * * *', () => {
   exec(shellOrder, (err, stdout, stderr) => {
     if (err) {
       console.log('err: ', err)
