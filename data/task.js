@@ -1,5 +1,4 @@
 // 脚本所在路径配置
-// const shellOrder = `sh /Users/yun/WorkSpace/MyCode/2019-nCov/data/task.sh`
 const shellOrder = `sh /apps/html/ncov/info/data/task.sh`
 const { exec } = require('child_process')
 const schedule = require('node-schedule')

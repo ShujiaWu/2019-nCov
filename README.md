@@ -12,6 +12,12 @@
 
 配置 `data/task.sh` ，`node` 所在路径，和获取数据js文件的地址。例如： `/usr/local/node/bin/node /apps/html/ncov/info/data/build-data.js`
 
+安装 `pm2`, `npm install -g pm2`
+
+进入到定时任务所在的目录`cd /apps/html/ncov/info/data`
+
+执行`pm2 start task.js --name "ncov-task"`
+
 ### 附加说明
 如果运行 `npm run serve` 和 `npm run build` 报错，请根据自己实际系统修改。笔者系统为`Mac`,其他系统请自行修改。
 
