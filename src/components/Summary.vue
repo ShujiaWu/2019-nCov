@@ -1,23 +1,33 @@
 <template>
   <div class="summary">
     <div class="confirm">
-      <div class="tip" v-if="today">较昨日<span class="small-number">+{{today.confirm}}</span></div>
-      <div class="number">{{total.confirm}}</div>
+      <div class="tip" v-if="today">
+        较昨日<span class="small-number">+{{ today.confirm }}</span>
+      </div>
+      <div class="number">{{ total.confirm }}</div>
       <div class="tag"><span>确诊人数</span></div>
     </div>
     <div class="suspect">
-      <div class="tip" v-if="today">较昨日<span class="small-number">+{{today.suspect}}</span></div>
-      <div class="number">{{total.suspect}}</div>
+      <div class="tip" v-if="today">
+        较昨日<span class="small-number"
+          >{{ today.suspect >= 0 ? '+' : '' }}{{ today.suspect }}</span
+        >
+      </div>
+      <div class="number">{{ total.suspect }}</div>
       <div class="tag"><span>疑似病例</span></div>
     </div>
     <div class="heal">
-      <div class="tip" v-if="today">较昨日<span class="small-number">+{{today.heal}}</span></div>
-      <div class="number">{{total.heal}}</div>
+      <div class="tip" v-if="today">
+        较昨日<span class="small-number">+{{ today.heal }}</span>
+      </div>
+      <div class="number">{{ total.heal }}</div>
       <div class="tag"><span>治愈人数</span></div>
     </div>
     <div class="dead">
-      <div class="tip" v-if="today">较昨日<span class="small-number">+{{today.dead}}</span></div>
-      <div class="number">{{total.dead}}</div>
+      <div class="tip" v-if="today">
+        较昨日<span class="small-number">+{{ today.dead }}</span>
+      </div>
+      <div class="number">{{ total.dead }}</div>
       <div class="tag"><span>死亡人数</span></div>
     </div>
   </div>
